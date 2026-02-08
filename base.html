@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Freelance Flow</title>
+    <style>
+        body { margin:0; font-family: Arial; background:#f4f6f8; }
+        .layout { display:flex; height:100vh; }
+        .sidebar {
+            width:220px;
+            background:#111827;
+            color:white;
+            padding:20px;
+        }
+        .sidebar a {
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:10px 0;
+        }
+        .sidebar a:hover { color:#38bdf8; }
+        .content {
+            flex:1;
+            padding:30px;
+        }
+        .card {
+            background:white;
+            padding:20px;
+            margin-bottom:20px;
+            border-radius:6px;
+            box-shadow:0 2px 4px rgba(0,0,0,.1);
+        }
+        .grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+            gap:20px;
+        }
+        button {
+            padding:8px 12px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:4px;
+            cursor:pointer;
+        }
+        button:hover { background:#1e40af; }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <div class="sidebar">
+        <h2>Freelance Flow</h2>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/clients">Clients</a>
+        <a href="/projects">Projects</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>

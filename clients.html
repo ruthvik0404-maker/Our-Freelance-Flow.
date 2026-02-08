@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Your Clients</h1>
+
+{% if clients %}
+    {% for client in clients %}
+        <div class="card">
+            <h3>{{ client.username }}</h3>
+            <a href="/client-projects/{{ client.id }}">
+                <button>View Projects</button>
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No clients yet. Invite someone to a project.</p>
+{% endif %}
+
+{% endblock %}

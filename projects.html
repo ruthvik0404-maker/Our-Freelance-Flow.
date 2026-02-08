@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Projects</h1>
+
+<!-- CREATE PROJECT -->
+<div class="card">
+    <input id="title" placeholder="Project title">
+    <button onclick="createProject()">Create Project</button>
+</div>
+
+{% for project in projects %}
+<div class="card">
+
+    <h3>{{ project.title }}</h3>
+
+    <!-- ACTION BUTTONS -->
+    <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <a href="/tasks/{{ project.id }}">
+            <button>Tasks</button>
+        </a>
+
+        <a href="/chat/{{ project.id }}">
+            <button>Chat</button>
+        </a>
+
+        <button onclick="loadProgress({{ project.id }})">
+            Progress
+        </button>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div style="background:#e5e7eb; height:10px; border-radius:5px;">
+        <div id="bar-{{ project.id }}"
+             style="height:10px; width:0%; background:#22c55e; border-radius:5px;">
+        </div>
+    </div>
+    <small id="text-{{ project.id }}">0%</small>
+
+    <!-- INVITE CLIENT -->
+    <div style="margin-top:10px;">
+        <input id="invite-{{ project.id }}" placeholder="Invite username">
+        <button onclick="invite({{ project.id }})">Invite Client</button>
+    </div>
+
+</div>
+{% endfor %}
+
+<script>
+function createProject() {
+    fetch("/create-project", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            title: document.getElementById("title").value
+        })
+    }).then(() => location.reload());
+}
+
+function invite(projectId) {
+    fetch("/invite-user", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            project_id: projectId,
+            username: document.getElementById("invite-"+projectId).value
+        })
+    }).then(res => res.json()).then(alert);
+}
+
+function loadProgress(projectId) {
+    fetch("/project-progress/" + projectId)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("bar-" + projectId).style.width =
+                data.progress + "%";
+            document.getElementById("text-" + projectId).innerText =
+                data.progress + "% completed";
+        });
+}
+</script>
+
+{% endblock %}
+s

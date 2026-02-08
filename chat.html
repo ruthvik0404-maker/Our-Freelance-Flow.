@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Project Chat</h2>
+
+<div class="card" style="height:300px; overflow-y:auto;">
+    {% for m in messages %}
+        <p>
+            <strong>{{ m.username }}:</strong>
+            {{ m.message }}
+            <small style="color:gray;">({{ m.timestamp }})</small>
+        </p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <input id="msg" placeholder="Type message..." style="width:80%">
+    <button onclick="send()">Send</button>
+</div>
+
+<script>
+function send() {
+    fetch("/send-message", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            project_id: {{ project_id }},
+            message: document.getElementById("msg").value
+        })
+    }).then(() => location.reload());
+}
+</script>
+
+{% endblock %}

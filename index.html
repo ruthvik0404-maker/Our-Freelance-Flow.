@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Our Freelance Flow</title>
+</head>
+<body>
+
+    <h2>Add Client</h2>
+
+    <input type="text" id="name" placeholder="Client Name">
+    <br><br>
+    <input type="email" id="email" placeholder="Client Email">
+    <br><br>
+    <button onclick="addClient()">Add Client</button>
+
+    <p id="result"></p>
+
+    <hr>
+
+    <h2>Client List</h2>
+    <ul id="clientList"></ul>
+
+    <script>
+        function addClient() {
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+
+            fetch("/add-client", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name, email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("result").innerText = data.message;
+                loadClients();
+            });
+        }
+
+        function loadClients() {
+            fetch("/clients")
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById("clientList");
+                    list.innerHTML = "";
+                    data.forEach(c => {
+                        const li = document.createElement("li");
+                       li.innerText = `ID: ${c.id} | ${c.name} - ${c.email}`;
+
+                        list.appendChild(li);
+                    });
+                });
+        }
+
+        loadClients();
+
+        function loadClientsIntoDropdown() {
+    fetch("/clients")
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById("clientSelect");
+            select.innerHTML = "";
+            data.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.id;
+                opt.text = `${c.name} (${c.email})`;
+                select.appendChild(opt);
+            });
+        });
+}
+
+function addProject() {
+    const clientId = document.getElementById("clientSelect").value;
+    const title = document.getElementById("projectTitle").value;
+    const description = document.getElementById("projectDesc").value;
+
+    fetch("/add-project", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            client_id: clientId,
+            title: title,
+            description: description
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("projectResult").innerText = data.message;
+        loadProjects(clientId);
+    });
+}
+
+function loadProjects(clientId) {
+    fetch(`/projects/${clientId}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById("projectList");
+            list.innerHTML = "";
+            data.forEach(p => {
+                const li = document.createElement("li");
+                li.innerText = `${p.title} - ${p.description}`;
+                list.appendChild(li);
+            });
+        });
+}
+loadClients();
+loadClientsIntoDropdown();
+loadClients();
+loadClientsIntoDropdown();
+
+setTimeout(() => {
+    const select = document.getElementById("clientSelect");
+    if (select.value) {
+        loadProjects(select.value);
+    }
+}, 300);
+
+
+    </script>
+
+</body>
+</html>
+
+<hr>
+
+<h2>Add Project</h2>
+
+<select id="clientSelect" onchange="loadProjects(this.value)"></select>
+
+<br><br>
+
+<input type="text" id="projectTitle" placeholder="Project Title">
+<br><br>
+
+<input type="text" id="projectDesc" placeholder="Project Description">
+<br><br>
+
+<button onclick="addProject()">Add Project</button>
+
+<p id="projectResult"></p>
+
+<h3>Projects</h3>
+<ul id="projectList"></ul>
+
+
